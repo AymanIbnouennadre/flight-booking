@@ -4,6 +4,8 @@
 #include <deque>
 #include <algorithm>
 #include <ctime>
+#include<map>
+#include<set>
 using namespace std;
 
 // Structure pour stocker une date
@@ -287,17 +289,17 @@ public:
 
 int main() {
     vector<Vol*> vols; // Vecteur pour stocker les vols
-    int nombreDeVols;
-    deque<Passager> passagers; // deque pour stocker les passagers
-     int nombrepassagers;
-    int choix=0,choix1=0,choix2=0,choix3=0;
+    deque<Passager*> passagers; // deque pour stocker les passagers
+    set<Paiement*> paiements;
+     int nombrepassagers,numvol,idpass,choix=0,choix1=0,choix2=0,choix3=0,nombreDeVols;
+     multimap<int, Reservation> reservationMap;
     int fonctionnalite=0;
     do {
     cout<<" *****MENU***** "<<endl;
     cout<<"1.GESTION DES VOLS"<<endl;
     cout<<"2.GESTION DES PASSAGERS"<<endl;
     cout<<"3.GESTION DES RESERVATIONS"<<endl;
-    cout<<"4.GESTION DES PAIEMENTS"<<endl;
+    cout<<"4.GESTION& DES PAIEMENTS"<<endl;
     cout<<"5.QUITTER"<<endl;
     cout<<"Choisir la fonctionnalite : ";
     cin>>fonctionnalite;
@@ -535,6 +537,7 @@ case 6 : {
 
 }
 }while(choix!=6);
+break;
 }
 
 case 2 :
@@ -582,9 +585,138 @@ switch(choix1) {
         break;
 }
 }while(choix1!=6);
+break;
     }
+case 3 : {
+ do {
+    cout<< "*****Gestion des Reservation ***** " <<endl;
+    cout<< "1. saisir une reservation "<<endl;
+    cout<< "2. afficher la liste des Reservation "<<endl;
+    cout<< "3. Modifier une Reservation "<<endl;
+    cout<<"4. Supprimer une reservation "<<endl;
+    cout<<"5. activer la reduction du 15% au montant global si le paiement est par espece"<<endl;
+    cout<<"6. quitter"<<endl;
+    cout<< "entrer votre choix : ";
+    cin >>choix2;
+switch(choix2) {
+    case 1 : {
+     // Demander à l'utilisateur de remplir le map
+ cout << "Donner le numéro de vol que vous souhaitez réserver : ";
+    cin >> numvol;
+    for ( auto ir=vols.begin();ir!=vols.end();ir++) {
+      if ((*ir)->getNumeroVol() == numvol && (*ir)->getPlacesDisponibles() > 0) {
+            cout << "Vol trouvé et les places sont disponibles" << endl;
+        int nombreReservations;
+        // Demander l'ID du passager
+        cout << "Saisir l'ID du passager : ";
+        cin >> idpass;
+        for(auto ip=passagers.begin();ip!=passagers.end();ip++){
+    if ((*ip)->getIdPassager() == idpass) {
+        cout << "Passager trouvé, vous pouvez réserver votre vol maintenant" << endl;
+        cout << "Combien de réservations au total souhaitez-vous faire pour ce vol ? ";
+        cin >> nombreReservations;
+
+        // Saisir les détails de chaque réservation
+        for (int i = 0; i < nombreReservations; ++i) {
+            // Demander les détails de la réservation
+            int idres;
+            Date datereser;
+
+            // Demander l'identifiant de la réservation
+            cout << "Entrez l'identifiant de la réservation : ";
+            cin >> idres;
+            cout << "Saisir la date (jour mois année) : ";
+            cin >> datereser.jour >> datereser.mois >> datereser.annee;
+
+            // Créer une nouvelle réservation
+            Reservation nouvelleReservation(idres, datereser, *ip, *ir, (*ir)->getPrix());
+            // Insérer la nouvelle réservation dans la map
+            reservationMap.insert({(*ip)->getIdPassager(), nouvelleReservation});
+
+            // Mettre à jour le nombre de places disponibles dans le vol
+            (*ir)->setPlacesDisponibles(((*ir)->getPlacesDisponibles() - 1));
+}
+           }
+         else {
+            cout << "Désolé, passager non trouvé" << endl;
+
+        }
+        }
+      }
+     else {
+        cout << "Désolé, vol non trouvé ou places épuisées" << endl;
+
     }
-}while(choix1!=5);
+
+    }
+    break;
+    }
+    case 2 :
+        {
+         break;
+
+        }
+    case 6 :
+        cout<< "*** By ***"<<endl;
+        break;
+    default :
+        cout<<" choix invalide "<<endl;
+        break;
+}
+}while(choix2!=6);
+}
+case 4 :{
+          do {
+        cout << "***** Menu des Paiements *****"<<endl;
+        cout << "1. Ajouter un paiement"<<endl;
+        cout << "2. Supprimer un paiement"<<endl;
+        cout << "3. Afficher les paiements avec un montant supérieur à 3000 dh"<<endl;
+        cout << "4. Quitter"<<endl;
+        cout << "Entrez votre choix: ";
+        cin>>choix3;
+          switch(choix3)
+{
+    case 1 :{
+                 int id;
+                double montant;
+                string methode;
+                cout << "Saisir l'ID du paiement: ";
+                cin >> id;
+                cout << "Saisir le montant: ";
+                cin >> montant;
+                cout << "Saisir la méthode de paiement: ";
+                cin >> methode;
+                Paiement* paiement;
+                paiements.insert(paiement);
+break;
+    }
+    case 2 :{
+          int id;
+                cout << "Saisir l'ID du paiement à supprimer: ";
+                cin >> id;
+break;
+    }
+    case 3 :{
+
+
+break ;
+    }
+    case 4:{
+        cout << "Quitter." << std::endl;
+                break;
+
+    }
+}
+
+          }while (choix!=4);
+          }
+
+
+    default:
+                        cout << "Choix invalide" << endl;
+                        break;
+    }
+}while(fonctionnalite!=5);
 
  return 0;
     }
