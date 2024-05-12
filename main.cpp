@@ -26,9 +26,9 @@ private:
     double totalAPayer;
 
 public:
-    // Constructeur
-    Reservation(int id, const Date& date, Passager* p, Vol* v, double total)
-        : idReservation(id), dateReservation(date), passager(p), vol(v), totalAPayer(total) {}
+   // Dans la classe Reservation, ajoutez une surcharge de constructeur qui accepte un Vol* plutôt qu'une référence à Vol
+Reservation(int id, Date date, Vol* vol, double Montanttotal)
+    : idReservation(id), dateReservation(date), vol(vol), totalAPayer(Montanttotal) {}
 
     // Méthodes getter et setter pour idReservation
     int getIdReservation() const { return idReservation; }
@@ -50,6 +50,15 @@ public:
     double getTotalAPayer() const { return totalAPayer; }
     void setTotalAPayer(double total) { totalAPayer = total; }
 
+void afficher()  {
+        cout << "ID Réservation: " << idReservation
+                  << ", Date: " << dateReservation.jour << "/"
+                  << dateReservation.mois << "/" << dateReservation.annee
+
+
+                  << ", Total à Payer: " << totalAPayer << " dh"
+                  << endl;
+    }
 
 };
 // Classe Passager
@@ -103,7 +112,6 @@ void afficherDetails()  {
         // Afficher les informations du passager
         cout << "Identifiant passager: " << idPassager << endl;
         cout << "Nom passager: " << nom << endl;
-
         // Afficher les réservations
         cout << "Reservations:" << endl;
         for (int id : reservations) {
@@ -246,12 +254,12 @@ private:
     double montant;
     Date datePaiement;
     string methodePaiement;
-    Reservation* reservation;
+    Reservation& reservation;
 
 public:
     // Constructeur
-    Paiement(int id, double montant, const Date& date, const string& methode, Reservation* res)
-        : idPaiement(id), montant(montant), datePaiement(date), methodePaiement(methode), reservation(res) {}
+    Paiement(int id, double mnt,  Date& date,  string& method,  Reservation& res)
+        : idPaiement(id), montant(mnt), datePaiement(date), methodePaiement(method), reservation(res) {}
 
     // Méthodes getter et setter pour idPaiement
     int getIdPaiement() const { return idPaiement; }
@@ -270,32 +278,25 @@ public:
     void setMethodePaiement(const string& methode) { methodePaiement = methode; }
 
     // Méthodes getter et setter pour reservation
-    Reservation* getReservation() const { return reservation; }
-    void setReservation(Reservation* res) { reservation = res; }
-    // Méthode pour effectuer le paiement
-    void effectuerPaiement() {
-        // Vérifier la méthode de paiement
-        if (methodePaiement == "carte") {
-            cout << "Paiement par carte effectué pour un montant de " << montant << " euros." << endl;
-        } else if (methodePaiement == "espece") {
-            cout << "Paiement en espèces effectué pour un montant de " << montant << " euros." << endl;
-        } else if (methodePaiement == "virement") {
-            cout << "Paiement par virement bancaire effectué pour un montant de " << montant << " euros." << endl;
-        } else {
-            cout << "Méthode de paiement non reconnue." << endl;
-        }
-    }
+    Reservation& getReservation() const { return reservation; }
+    void setReservation(Reservation& res) { reservation = res; }
+
+
 };
 
+
 int main() {
+    system("COLOR 5f");
+	cout<<"\n\t\t\t\t AYMAN IBNOUENNADRE AND YASSINE KHABICH PRESENTE : \n \t\t\t\t\t GESTION RESERVATION DE VOL "<<endl;
     vector<Vol*> vols; // Vecteur pour stocker les vols
-    deque<Passager*> passagers; // deque pour stocker les passagers
+    deque<Passager> passagers; // deque pour stocker les passagers
     set<Paiement*> paiements;
-     int nombrepassagers,numvol,idpass,choix=0,choix1=0,choix2=0,choix3=0,nombreDeVols;
+     int nombrepassagers,numvol,idpass,choix=0,choix1=0,choix2=0,choix3=0,nombreDeVols, nombreReservations;
      multimap<int, Reservation> reservationMap;
     int fonctionnalite=0;
     do {
     cout<<" *****MENU***** "<<endl;
+    cout<<" Saisir tout d'abord un vol , passager , reservation puis paiement pour utiliser tous les fonctions "<<endl;
     cout<<"1.GESTION DES VOLS"<<endl;
     cout<<"2.GESTION DES PASSAGERS"<<endl;
     cout<<"3.GESTION DES RESERVATIONS"<<endl;
@@ -312,7 +313,7 @@ case 1 : {
     cout<< "2. modifier un vol "<<endl;
     cout<< "3. supprimer un vol "<<endl;
     cout<<"4. afficher  les nombres de places des vols dont la date de depart dans 12 mois "<<endl;
-    cout<<"5. augmenter le prix de vol de 20% si date de depart dans un mois et le nombre de place < 10"<<endl;
+    cout<<"5. activer l'augementation de prix de vol de 20% si date de depart dans un mois et le nombre de place < 10"<<endl;
     cout<<"6. quitter"<<endl;
     cout<< "entrer votre choix : ";
     cin >>choix;
@@ -545,7 +546,6 @@ case 2 :
      do {
     cout<< "*****Gestion des Passagers***** " <<endl;
     cout<< "1. saisir des Passager "<<endl;
-    cout<< "2. afficher la liste des Passager "<<endl;
     cout<< "3. trier la liste des vols par nom passager "<<endl;
     cout<<"4. effectuer une reduction 20% si le nombre de passage > 5 "<<endl;
     cout<<"5. afficher pour chaque passager la facture de paiement"<<endl;
@@ -569,14 +569,61 @@ switch(choix1) {
         cout << "Téléphone: ";
         cin >> telephone;
         cout << "Numéro de passeport: ";
-        cin >> numeroPasseport;}
+        cin >> numeroPasseport;
+         // Affichage des coordonnées saisies
+        cout << "Coordonnées saisies pour le passager " << (i + 1) << " :" << endl;
+        cout << "ID du passager: " << idPassager << endl;
+        cout << "Nom: " << nom << endl;
+        cout << "Téléphone: " << telephone << endl;
+        cout << "Numéro de passeport: " << numeroPasseport << endl;
+        }
         break;
     }
-    case 2 :
+    case 3 :
         {
+            sort(vols.begin(), vols.end(), [](const Vol* a, const Vol* b) {
+        return a->getNumeroVol() < b->getNumeroVol();});
+
          break;
 
         }
+
+
+case 4 : {
+    double montant;
+    auto range = reservationMap.equal_range(1);
+    int nombreReservations = distance(range.first, range.second);
+    if (nombreReservations > 5) {
+        cout << "Passager 1 a plus de 5 réservations. Réduction de 20 % appliquée." << endl;
+        for (auto it = range.first; it != range.second; it++) {
+            double reduction = montant * 0.2;  // 20 % de réduction
+            double rmontant=(montant - reduction);  // Appliquer la réduction
+        }
+    }
+    break;
+}
+case 5:
+{
+    int idPassager;
+    cout << "Saisir l'ID du passager pour afficher sa facture: ";
+    cin >> idPassager;
+
+    auto range = reservationMap.equal_range(idPassager);  // Obtenir toutes les réservations associées à cet ID
+    if (range.first == range.second) {  // Si la plage est vide
+        cout << "Aucune réservation trouvée pour le passager avec ID " << idPassager << endl;
+    } else {
+        double totalPayer = 0;  // Total à payer pour ce passager
+        cout << "Facture pour le passager avec ID " << idPassager << ":" << endl;
+        for (auto it = range.first; it != range.second; ++it) {  // Parcourir les réservations associées
+            it->second.afficher();  // Afficher les détails de chaque réservation
+            totalPayer += it->second.getTotalAPayer();  // Ajouter le montant au total
+        }
+        cout << "Total à payer: " << totalPayer << " dh" << endl;
+    }
+    break;
+}
+
+
     case 6 :
         cout<< "*** By ***"<<endl;
         break;
@@ -603,16 +650,15 @@ switch(choix2) {
      // Demander à l'utilisateur de remplir le map
  cout << "Donner le numéro de vol que vous souhaitez réserver : ";
     cin >> numvol;
-    for ( auto ir=vols.begin();ir!=vols.end();ir++) {
+    for ( auto ir=vols.begin();ir!=vols.end();ir++)  {
       if ((*ir)->getNumeroVol() == numvol && (*ir)->getPlacesDisponibles() > 0) {
             cout << "Vol trouvé et les places sont disponibles" << endl;
-        int nombreReservations;
+
         // Demander l'ID du passager
-        cout << "Saisir l'ID du passager : ";
+        cout << "Saisir l'ID du passager : ( un vrai id d'un vrai passager déja saisi ) ";
         cin >> idpass;
-        for(auto ip=passagers.begin();ip!=passagers.end();ip++){
-    if ((*ip)->getIdPassager() == idpass) {
-        cout << "Passager trouvé, vous pouvez réserver votre vol maintenant" << endl;
+
+        cout << " vous pouvez réserver votre vol maintenant" << endl;
         cout << "Combien de réservations au total souhaitez-vous faire pour ce vol ? ";
         cin >> nombreReservations;
 
@@ -629,33 +675,114 @@ switch(choix2) {
             cin >> datereser.jour >> datereser.mois >> datereser.annee;
 
             // Créer une nouvelle réservation
-            Reservation nouvelleReservation(idres, datereser, *ip, *ir, (*ir)->getPrix());
+            Reservation nouvelleReservation(idres, datereser, *ir, (*ir)->getPrix());
             // Insérer la nouvelle réservation dans la map
-            reservationMap.insert({(*ip)->getIdPassager(), nouvelleReservation});
+            reservationMap.insert({idpass, nouvelleReservation}); // Utilisez getIdPassager() directement via *ip
 
             // Mettre à jour le nombre de places disponibles dans le vol
             (*ir)->setPlacesDisponibles(((*ir)->getPlacesDisponibles() - 1));
-}
-           }
-         else {
-            cout << "Désolé, passager non trouvé" << endl;
+        }
 
-        }
-        }
+
+
+
       }
+
      else {
         cout << "Désolé, vol non trouvé ou places épuisées" << endl;
 
     }
+    }
 
-    }
-    break;
-    }
+
+ break;
+}
+
+
     case 2 :
         {
+            // Parcourir la map reservationMap pour afficher les détails de chaque réservation
+cout << "Liste des réservations : " << endl;
+for (const auto& pair : reservationMap) {
+    cout << "ID Passager associé : " << pair.first << endl; // ID du passager associé
+    Reservation reservation = pair.second;
+    cout << "  ID Réservation : " << reservation.getIdReservation() << endl; // ID de la réservation
+    cout << "  Date de réservation : " << reservation.getDateReservation().jour << "/" << reservation.getDateReservation().mois << "/" << reservation.getDateReservation().annee << endl; // Date de réservation
+    cout << "  ID Vol associé : " << reservation.getVol()->getNumeroVol() << endl; // ID du vol associé
+    cout<<" le Montant Total a paye est : "<<reservation.getTotalAPayer()<<" MAD "<<endl;
+}
          break;
 
         }
+        case 3 : {
+        // Demander l'ID de la réservation à modifier
+int idReservation;
+cout << "Entrez l'ID de la réservation à modifier : ";
+cin >> idReservation;
+
+// Recherche de la réservation dans la map
+auto reservationIt = reservationMap.find(idReservation);
+if (reservationIt != reservationMap.end()) {
+    // Réservation trouvée
+    Reservation& reservation = reservationIt->second;
+
+    // Demander le nouvel ID du passager
+    int nouvelIdPassager;
+    cout << "Entrez le nouvel ID du passager : ";
+    cin >> nouvelIdPassager;
+
+    // Recherche du nouveau passager dans le deque des passagers
+    auto passagerIt = find_if(passagers.begin(), passagers.end(), [nouvelIdPassager](const Passager& passager) {
+        return passager.getIdPassager() == nouvelIdPassager;
+    });
+
+    if (passagerIt != passagers.end()) {
+        // Nouveau passager trouvé
+        Passager& nouveauPassager = *passagerIt;
+
+        // Mettre à jour le passager associé à la réservation
+        reservation.setPassager(&nouveauPassager);
+
+        cout << "Passager associé à la réservation mis à jour avec succès !" << endl;
+    } else {
+        // Nouveau passager non trouvé
+        cout << "Erreur : Passager avec l'ID " << nouvelIdPassager << " non trouvé." << endl;
+    }
+} else {
+    // Réservation non trouvée
+    cout << "Erreur : Réservation avec l'ID " << idReservation << " non trouvée." << endl;
+}
+break;
+        }
+        case 4 : {
+         // Demander l'ID de la réservation à supprimer
+int idReservation;
+cout << "Entrez l'ID de la réservation à supprimer : ";
+cin >> idReservation;
+
+// Recherche de la réservation dans la map
+auto reservationIt = reservationMap.find(idReservation);
+if (reservationIt != reservationMap.end()) {
+    // Réservation trouvée
+    Reservation& reservation = reservationIt->second;
+
+    // Récupérer le vol associé à la réservation
+    Vol* volAssocie = reservation.getVol();
+
+    // Mettre à jour le nombre de places disponibles dans le vol
+    volAssocie->setPlacesDisponibles(volAssocie->getPlacesDisponibles() + 1);
+
+    // Supprimer la réservation de la map
+    reservationMap.erase(reservationIt);
+
+    cout << "Réservation avec l'ID " << idReservation << " supprimée avec succès." << endl;
+} else {
+    // Réservation non trouvée
+    cout << "Erreur : Réservation avec l'ID " << idReservation << " non trouvée." << endl;
+}
+       break;
+        }
+
     case 6 :
         cout<< "*** By ***"<<endl;
         break;
@@ -664,6 +791,7 @@ switch(choix2) {
         break;
 }
 }while(choix2!=6);
+break;
 }
 case 4 :{
           do {
@@ -677,39 +805,92 @@ case 4 :{
           switch(choix3)
 {
     case 1 :{
-                 int id;
+                // Demander l'ID de la réservation pour effectuer le paiement
+                 int idReservation,idPaiement;
                 double montant;
+                Date datePaiement;
                 string methode;
-                cout << "Saisir l'ID du paiement: ";
-                cin >> id;
+                 cout << "Entrez l'ID de la réservation pour effectuer le paiement : ";
+                 cin >> idReservation;
+                 // Vérifier si l'ID de réservation existe dans la map
+auto reservationIt = reservationMap.find(idReservation);
+if (reservationIt != reservationMap.end()) {
+    cout << "Réservation trouvée !" << endl;
+    cout << "Saisir l'ID du paiement: ";
+                cin >> idPaiement;
                 cout << "Saisir le montant: ";
                 cin >> montant;
                 cout << "Saisir la méthode de paiement: ";
                 cin >> methode;
-                Paiement* paiement;
-                paiements.insert(paiement);
+                // Vérifier si la méthode de paiement est "cash"
+if (methode == "cash") {
+    // Appliquer la réduction de 15%
+    montant *= 0.85; // Soustraire 15%
+}
+                cout << "Saisir la date du paiement (jour mois année) : ";
+cin >> datePaiement.jour >> datePaiement.mois >> datePaiement.annee;
+Reservation& reservation = reservationIt->second;
+                // Créer un nouvel objet Paiement avec les valeurs saisies
+                 Paiement* nouveauPaiement = new Paiement(idPaiement,montant,datePaiement,methode,reservation);
+                paiements.insert(nouveauPaiement);
+break;
+}
+else
+    cout << "Réservation non trouvée." << endl;
+
 break;
     }
-    case 2 :{
-          int id;
+case 2 :{
+          int id_paiement;
                 cout << "Saisir l'ID du paiement à supprimer: ";
-                cin >> id;
+                cin >> id_paiement;
+                 auto it = find_if(paiements.begin(), paiements.end(),
+                    [id_paiement](Paiement* paiement) { return paiement->getIdPaiement() == id_paiement; });
+
+                if (it != paiements.end()) {
+                    delete *it;  // Supprime le paiement alloué dynamiquement
+                    paiements.erase(it);  // Retire le pointeur du set
+                    cout << "Paiement supprimé avec succès." << endl;
+                } else {
+                    cout << "Aucun paiement trouvé avec cet ID." << endl;
+                }
+
 break;
     }
-    case 3 :{
+case 3:
+{
+    for (const auto& pair : reservationMap) {
+        const Reservation& reservation = pair.second;
+        if (reservation.getTotalAPayer() > 3000) {  // Condition pour vérifier le montant
+           cout << "Liste des réservations : " << endl;
+    cout << "ID Passager associé : " << pair.first << endl; // ID du passager associé
+    Reservation reservation = pair.second;
+    cout << "  ID Réservation : " << reservation.getIdReservation() << endl; // ID de la réservation
+    cout << "  Date de réservation : " << reservation.getDateReservation().jour << "/" << reservation.getDateReservation().mois << "/" << reservation.getDateReservation().annee << endl; // Date de réservation
+    cout << "  ID Vol associé : " << reservation.getVol()->getNumeroVol() << endl; // ID du vol associé
+    cout<<" le Montant Total a paye est : "<<reservation.getTotalAPayer()<<" MAD "<<endl;
+}
+            }
 
 
-break ;
-    }
+    break;
+}
+
     case 4:{
-        cout << "Quitter." << std::endl;
+        cout << "****by****" << endl;
                 break;
 
     }
 }
 
           }while (choix!=4);
+          break;
           }
+
+          case 5 :
+            cout<<"****BY****";
+            break;
+
 
 
     default:
