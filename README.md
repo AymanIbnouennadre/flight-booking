@@ -1,2 +1,2 @@
-# projet with c++
+# project with c++
 
